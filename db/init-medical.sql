@@ -3,7 +3,7 @@ CREATE SCHEMA IF NOT EXISTS telemetry;
 
 CREATE TABLE IF NOT EXISTS telemetry.raw_events (
     event_id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
+    user_id VARCHAR(50) NOT NULL,
     prosthesis_id INTEGER NOT NULL,
     timestamp TIMESTAMP NOT NULL,
     response_time_ms INTEGER,
