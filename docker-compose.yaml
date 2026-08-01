@@ -49,6 +49,8 @@ services:
       - ./postgres-keycloak-data:/var/lib/postgresql/data
     ports:
       - "5436:5432"
+    networks:                          # ← добавлено
+      - dag_sample
   keycloak:
     image: quay.io/keycloak/keycloak:21.1
     environment:
@@ -67,6 +69,8 @@ services:
       - "8080:8080"
     depends_on:
       - keycloak_db
+    networks:                          # ← добавлено
+      - dag_sample
   frontend:
     build:
       context: ./frontend
@@ -78,7 +82,29 @@ services:
       REACT_APP_KEYCLOAK_URL: http://localhost:8080
       REACT_APP_KEYCLOAK_REALM: reports-realm
       REACT_APP_KEYCLOAK_CLIENT_ID: reports-frontend
-      
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8000"
+    environment:
+      - DATABASE_URL=postgresql://airflow:airflow@postgres:5432/airflow
+      - KEYCLOAK_URL=http://keycloak:8080
+      - KEYCLOAK_REALM=reports-realm
+      - KEYCLOAK_CLIENT_ID=reports-api
+      - KEYCLOAK_CLIENT_SECRET=oNwoLQdvJAvRcL89SydqCWCe5ry1jMgq  # из вашего realm
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    networks:
+      - dag_sample
+#     volumes:
+#       - ./backend:/app
+
   # Существующий сервис postgres (используется как OLAP для теста)
   postgres:
     image: postgres:16.0
