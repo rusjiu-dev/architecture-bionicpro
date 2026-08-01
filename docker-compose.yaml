@@ -1,6 +1,44 @@
 version: '3.8'
 
+x-airflow-common: &airflow-common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  environment: &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
+    AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
+    AIRFLOW__WEBSERVER__SECRET_KEY: 'your_airflow_webserver_sec_key'
+    AIRFLOW_CONN_WRITE_TO_POSTGRES: postgresql://airflow:airflow@postgres:5432/airflow
+    _PIP_ADDITIONAL_REQUIREMENTS: ''
+    AIRFLOW_INPUT_DIR: '/opt/airflow/dag-inputs'
+    # Добавляем переменные для подключений к БД
+    AIRFLOW_CONN_CRM_DB: postgresql://crm_user:crm_pass@crm-db:5432/crm_db
+    AIRFLOW_CONN_MEDICAL_DB: postgresql://medical_user:medical_pass@medical-db:5432/medical_db
+    AIRFLOW_CONN_OLAP_DB: postgresql://airflow:airflow@postgres:5432/airflow  # Используем ту же БД Airflow для OLAP (для теста)
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./dags/sql:/opt/airflow/dags/sql
+    - ./requirements.txt:/opt/airflow/requirements.txt
+    - ./data:/opt/airflow/sample_files
+  user: "${AIRFLOW_UID:-50000}:0"
+  depends_on: &airflow-common-depends-on
+    postgres:
+      condition: service_healthy
+    crm-db:
+      condition: service_healthy
+    medical-db:
+      condition: service_healthy
+  networks:
+    - dag_sample
+
 services:
+
   keycloak_db:
     image: postgres:14
     environment:
@@ -10,7 +48,7 @@ services:
     volumes:
       - ./postgres-keycloak-data:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "5436:5432"
   keycloak:
     image: quay.io/keycloak/keycloak:21.1
     environment:
@@ -40,5 +78,203 @@ services:
       REACT_APP_KEYCLOAK_URL: http://localhost:8080
       REACT_APP_KEYCLOAK_REALM: reports-realm
       REACT_APP_KEYCLOAK_CLIENT_ID: reports-frontend
+      
+  # Существующий сервис postgres (используется как OLAP для теста)
+  postgres:
+    image: postgres:16.0
+    volumes:
+      - ./db/init-db.sql:/docker-entrypoint-initdb.d/db.sql
+      - ./db/init-olap.sql:/docker-entrypoint-initdb.d/init-olap.sql  # Добавим скрипт для витрины
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - -U
+        - airflow
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+    networks:
+      - dag_sample
+    ports:
+      - "5432:5432"  # Добавим проброс порта для удобства
+
+  # НОВЫЙ СЕРВИС: CRM БД
+  crm-db:
+    image: postgres:16.0
+    volumes:
+      - ./db/init-crm.sql:/docker-entrypoint-initdb.d/init-crm.sql
+      - ./data/crm_users.csv:/docker-entrypoint-initdb.d/crm_users.csv
+      - ./data/crm_prostheses.csv:/docker-entrypoint-initdb.d/crm_prostheses.csv  # Тестовые данные
+    environment:
+      POSTGRES_USER: crm_user
+      POSTGRES_PASSWORD: crm_pass
+      POSTGRES_DB: crm_db
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "crm_user", "-d", "crm_db"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+    networks:
+      - dag_sample
+    ports:
+      - "5433:5432"  # Пробрасываем на другой порт, чтобы не конфликтовать с postgres
+
+  # НОВЫЙ СЕРВИС: Medical БД (телеметрия)
+  medical-db:
+    image: postgres:16.0
+    volumes:
+      - ./db/init-medical.sql:/docker-entrypoint-initdb.d/init-medical.sql
+      - ./data/telemetry_sample.csv:/docker-entrypoint-initdb.d/telemetry_sample.csv
+    environment:
+      POSTGRES_USER: medical_user
+      POSTGRES_PASSWORD: medical_pass
+      POSTGRES_DB: medical_db
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "medical_user", "-d", "medical_db"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+    networks:
+      - dag_sample
+    ports:
+      - "5434:5432"
+
+  # Остальные сервисы (без изменений, кроме depends_on)
+  airflow-webserver:
+    <<: *airflow-common
+    ports:
+      - "8085:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      crm-db:
+        condition: service_healthy
+      medical-db:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    command: webserver
+    networks:
+      - dag_sample
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  airflow-scheduler:
+    <<: *airflow-common
+    networks:
+      - dag_sample
+    command: scheduler
+    depends_on:
+      postgres:
+        condition: service_healthy
+      crm-db:
+        condition: service_healthy
+      medical-db:
+        condition: service_healthy
+      airflow-webserver:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  airflow-triggerer:
+    <<: *airflow-common
+    depends_on:
+      postgres:
+        condition: service_healthy
+      crm-db:
+        condition: service_healthy
+      medical-db:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+      - dag_sample
+    command: bash -c "airflow triggerer"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - airflow jobs check --job-type TriggererJob --hostname "${HOSTNAME}"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
+
+  airflow-cli:
+    <<: *airflow-common
+    depends_on:
+      postgres:
+        condition: service_healthy
+      crm-db:
+        condition: service_healthy
+      medical-db:
+        condition: service_healthy
+    networks:
+      - dag_sample
+    profiles:
+      - debug
+    command:
+      - bash
+      - -c
+      - airflow
+
+  airflow-init:
+    <<: *airflow-common
+    depends_on:
+      postgres:
+        condition: service_healthy
+      crm-db:
+        condition: service_healthy
+      medical-db:
+        condition: service_healthy
+    command: >
+      bash -c "airflow db migrate && 
+      airflow users create --username admin --firstname admin --lastname admin --role Admin --email admin@sample.ru --password admin"
+    networks:
+      - dag_sample
+
+  airflow-connections-init:
+    <<: *airflow-common
+    depends_on:
+      postgres:
+        condition: service_healthy
+      crm-db:
+        condition: service_healthy
+      medical-db:
+        condition: service_healthy
+    networks:
+      - dag_sample
+    command: >
+      bash -c "
+      airflow db migrate &&
+      airflow connections add 'crm_db' --conn-type 'postgres' --conn-host 'crm-db' --conn-schema 'crm_db' --conn-login 'crm_user' --conn-password 'crm_pass' --conn-port 5432 &&
+      airflow connections add 'medical_db' --conn-type 'postgres' --conn-host 'medical-db' --conn-schema 'medical_db' --conn-login 'medical_user' --conn-password 'medical_pass' --conn-port 5432 &&
+      airflow connections add 'olap_db' --conn-type 'postgres' --conn-host 'postgres' --conn-schema 'airflow' --conn-login 'airflow' --conn-password 'airflow' --conn-port 5432
+      "
+#    profiles:
+#      - init
+
+networks:
+  dag_sample:
+
+
 
 
