@@ -1,0 +1,4 @@
+id,full_name,email,phone,registration_date,is_active
+1,Иван Петров,ivan.petrov@example.com,+79001234567,2026-01-15,true
+2,Мария Смирнова,maria.s@example.com,+79007654321,2026-02-20,true
+3,Алексей Соколов,alex.s@example.com,+79009998877,2026-03-10,true

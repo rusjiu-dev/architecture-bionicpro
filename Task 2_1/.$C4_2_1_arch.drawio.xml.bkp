@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 YaBrowser/24.10.0.0 Safari/537.36" version="24.8.4">
+  <diagram name="Page-1" id="Vdj-dLDs9ZxfFK_ICv-k">
+    <mxGraphModel dx="1643" dy="1926" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- ===== СИСТЕМНАЯ ГРАНИЦА ===== -->
+        <object placeholders="1" c4Name="BionicPRO" c4Type="SystemScopeBoundary" c4Application="Software System" label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;&lt;div style=&quot;text-align: left&quot;&gt;%c4Name%&lt;/div&gt;&lt;/b&gt;&lt;/font&gt;&lt;div style=&quot;text-align: left&quot;&gt;[%c4Application%]&lt;/div&gt;" id="boundary">
+          <mxCell style="rounded=1;fontSize=11;whiteSpace=wrap;html=1;dashed=1;arcSize=20;fillColor=none;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=none;align=left;verticalAlign=bottom;labelBorderColor=none;spacingTop=0;spacing=10;dashPattern=8 4;metaEdit=1;rotatable=0;perimeter=rectanglePerimeter;noLabel=0;labelPadding=0;allowArrows=0;connectable=0;expand=0;recursiveResize=0;editable=1;pointerEvents=0;absoluteArcSize=1;points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];" parent="1" vertex="1">
+            <mxGeometry x="610" y="-80" width="1350" height="1200" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- ===== ВНЕШНИЕ СИСТЕМЫ (IdP) ===== -->
+        <object placeholders="1" c4Name="Keycloak IdP" c4Type="External System" c4Technology="OAuth 2.0 / OpenID Connect" c4Description="Внешний провайдер учётных записей для России" label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#cccccc&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="idp_keycloak">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#6C6477;fontColor=#ffffff;align=center;arcSize=10;strokeColor=#4D4D4D;metaEdit=1;resizable=0;dashed=1;points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];" parent="1" vertex="1">
+            <mxGeometry x="1900" y="100" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <object placeholders="1" c4Name="Google IdP" c4Type="External System" c4Technology="OAuth 2.0 / OpenID Connect" c4Description="Внешний провайдер учётных записей для США" label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#cccccc&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="idp_google">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#6C6477;fontColor=#ffffff;align=center;arcSize=10;strokeColor=#4D4D4D;metaEdit=1;resizable=0;dashed=1;points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];" parent="1" vertex="1">
+            <mxGeometry x="1900" y="300" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <object placeholders="1" c4Name="EU IdP (eIDAS)" c4Type="External System" c4Technology="eIDAS / OAuth 2.0" c4Description="Внешний провайдер учётных записей для ЕС" label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#cccccc&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="idp_eu">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#6C6477;fontColor=#ffffff;align=center;arcSize=10;strokeColor=#4D4D4D;metaEdit=1;resizable=0;dashed=1;points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];" parent="1" vertex="1">
+            <mxGeometry x="1900" y="500" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- ===== ПОЛЬЗОВАТЕЛИ ===== -->
+        <object placeholders="1" c4Name="Пилот протеза" c4Type="Person" c4Description="С этого человека считываются данные" label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#cccccc&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="pilot">
+          <mxCell style="html=1;fontSize=11;dashed=0;whiteSpace=wrap;fillColor=#6C6477;strokeColor=#4D4D4D;fontColor=#ffffff;shape=mxgraph.c4.person2;align=center;metaEdit=1;points=[[0.5,0,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0]];resizable=0;" parent="1" vertex="1">
+            <mxGeometry x="20" y="350" width="200" height="180" as="geometry" />
+          </mxCell>
+        </object>
+
+        <object placeholders="1" c4Name="Покупатель протеза" c4Type="Person" c4Description="" label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#cccccc&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="buyer">
+          <mxCell style="html=1;fontSize=11;dashed=0;whiteSpace=wrap;fillColor=#6C6477;strokeColor=#4D4D4D;fontColor=#ffffff;shape=mxgraph.c4.person2;align=center;metaEdit=1;points=[[0.5,0,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0]];resizable=0;" parent="1" vertex="1">
+            <mxGeometry x="30" y="-80" width="200" height="180" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- ===== КОНТЕЙНЕРЫ BionicPRO ===== -->
+
+        <!-- 1. Программа в чипе протеза -->
+        <object placeholders="1" c4Name="Программа в чипе протеза" c4Type="Container" c4Technology="C++ / ESP32" c4Description="Чтение данных с датчиков, распознавание движений и их воспроизводство. Чтение команд из приложения и их воспроизводство, передача телеметрии" label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%: %c4Technology%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#E6E6E6&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="prosthesis_fw">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=#1061B0;fontColor=#ffffff;align=center;arcSize=10;strokeColor=#0D5091;metaEdit=1;resizable=0;points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];" parent="1" vertex="1">
+            <mxGeometry x="350" y="380" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- 2. Приложение для донастройки протеза -->
+        <object placeholders="1" c4Name="Приложение для донастройки протеза" c4Type="Container" c4Technology="iOS / Android" c4Description="Взаимодействует с Auth Gateway для аутентификации. Получает сессионные токены, не хранит access/refresh токены." label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%: %c4Technology%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#E6E6E6&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="mobile_app">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;arcSize=10;strokeColor=#0E7DAD;metaEdit=1;resizable=0;points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];" parent="1" vertex="1">
+            <mxGeometry x="340" y="620" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- 3. Auth Gateway -->
+        <object placeholders="1" c4Name="Auth Gateway" c4Type="Container" c4Technology="Java / Spring Boot" c4Description="Шлюз аутентификации. Взаимодействует с IdP, хранит access/refresh токены, выдаёт сессионные токены фронтенду. Проксирует запросы к API. Поддерживает PKCE." label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%: %c4Technology%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#E6E6E6&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="auth_gateway">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#E67933;fontColor=#ffffff;align=center;arcSize=10;strokeColor=#B85C1A;metaEdit=1;resizable=0;points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];" parent="1" vertex="1">
+            <mxGeometry x="700" y="780" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- 4. API -->
+        <object placeholders="1" c4Name="API" c4Type="Container" c4Technology="Spring Boot / REST" c4Description="Принимает запросы от Auth Gateway, проверяет права доступа, взаимодействует с БД. Предоставляет эндпоинт для отчётов." label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%: %c4Technology%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#E6E6E6&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="api">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;arcSize=10;strokeColor=#0E7DAD;metaEdit=1;resizable=0;points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];" parent="1" vertex="1">
+            <mxGeometry x="1050" y="780" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- 5. User Data Store -->
+        <object placeholders="1" c4Name="User Data Store" c4Type="Container" c4Technology="PostgreSQL" c4Description="Хранилище учётных записей. Расположено локально в стране представительства. Содержит только внутренние идентификаторы и связь с внешними IdP." label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%: %c4Technology%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#E6E6E6&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="user_db">
+          <mxCell style="shape=cylinder3;size=15;whiteSpace=wrap;html=1;boundedLbl=1;rounded=0;labelBackgroundColor=none;fillColor=#23A2D9;fontSize=12;fontColor=#ffffff;align=center;strokeColor=#0E7DAD;metaEdit=1;points=[[0.5,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.5,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];resizable=0;" parent="1" vertex="1">
+            <mxGeometry x="700" y="1000" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- 6. Medical Data Store -->
+        <object placeholders="1" c4Name="Medical Data Store" c4Type="Container" c4Technology="PostgreSQL" c4Description="Хранилище медицинских данных. Содержит данные о миосигналах, настройках протезов, отчётах." label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%: %c4Technology%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#E6E6E6&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="medical_db">
+          <mxCell style="shape=cylinder3;size=15;whiteSpace=wrap;html=1;boundedLbl=1;rounded=0;labelBackgroundColor=none;fillColor=#23A2D9;fontSize=12;fontColor=#ffffff;align=center;strokeColor=#0E7DAD;metaEdit=1;points=[[0.5,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.5,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];resizable=0;" parent="1" vertex="1">
+            <mxGeometry x="1050" y="1000" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- 7. Интернет-магазин -->
+        <object placeholders="1" c4Name="Интернет-магазин" c4Type="Container" c4Technology="Битрикс24" c4Description="" label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%: %c4Technology%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#E6E6E6&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="web_store">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;arcSize=10;strokeColor=#0E7DAD;metaEdit=1;resizable=0;points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];" parent="1" vertex="1">
+            <mxGeometry x="700" y="-50" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- 8. CRM -->
+        <object placeholders="1" c4Name="CRM" c4Type="Container" c4Technology="Битрикс24" c4Description="" label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%: %c4Technology%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#E6E6E6&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="crm">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;arcSize=10;strokeColor=#0E7DAD;metaEdit=1;resizable=0;points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];" parent="1" vertex="1">
+            <mxGeometry x="1180" y="-50" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- 9. CRM DB -->
+        <object placeholders="1" c4Name="CRM DB" c4Type="Container" c4Technology="PostgreSQL" c4Description="" label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%: %c4Technology%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#E6E6E6&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="crm_db">
+          <mxCell style="shape=cylinder3;size=15;whiteSpace=wrap;html=1;boundedLbl=1;rounded=0;labelBackgroundColor=none;fillColor=#23A2D9;fontSize=12;fontColor=#ffffff;align=center;strokeColor=#0E7DAD;metaEdit=1;points=[[0.5,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.5,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];resizable=0;" parent="1" vertex="1">
+            <mxGeometry x="1320" y="100" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- ===== НОВЫЙ БЛОК: СЕРВИС ОТЧЁТОВ ===== -->
+        
+        <!-- 10. Apache Airflow -->
+        <object placeholders="1" c4Name="Apache Airflow" c4Type="Container" c4Technology="Python / DAG" c4Description="Оркестрация ETL-пайплайнов. Извлечение данных из CRM и Medical DB, трансформация, загрузка в OLAP." label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%: %c4Technology%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#E6E6E6&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="airflow">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#F9A825;fontColor=#ffffff;align=center;arcSize=10;strokeColor=#F57F17;metaEdit=1;resizable=0;points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];" parent="1" vertex="1">
+            <mxGeometry x="1450" y="380" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- 11. ClickHouse (OLAP) -->
+        <object placeholders="1" c4Name="ClickHouse (OLAP)" c4Type="Container" c4Technology="ClickHouse" c4Description="Витрина отчётных данных. Агрегированные метрики по пользователям и протезам." label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%: %c4Technology%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#E6E6E6&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="clickhouse">
+          <mxCell style="shape=cylinder3;size=15;whiteSpace=wrap;html=1;boundedLbl=1;rounded=0;labelBackgroundColor=none;fillColor=#F9A825;fontSize=12;fontColor=#ffffff;align=center;strokeColor=#F57F17;metaEdit=1;points=[[0.5,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.5,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];resizable=0;" parent="1" vertex="1">
+            <mxGeometry x="1450" y="900" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- 12. S3 / MinIO -->
+        <object placeholders="1" c4Name="S3 / MinIO" c4Type="Container" c4Technology="Object Storage" c4Description="Хранение сгенерированных файлов отчётов (PDF/CSV). Выдача по подписанным URL." label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%: %c4Technology%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#E6E6E6&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="s3">
+          <mxCell style="shape=cylinder3;size=15;whiteSpace=wrap;html=1;boundedLbl=1;rounded=0;labelBackgroundColor=none;fillColor=#F9A825;fontSize=12;fontColor=#ffffff;align=center;strokeColor=#F57F17;metaEdit=1;points=[[0.5,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.5,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];resizable=0;" parent="1" vertex="1">
+            <mxGeometry x="1750" y="900" width="240" height="120" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- ===== ВНУТРЕННИЕ ПОЛЬЗОВАТЕЛИ ===== -->
+        <object placeholders="1" c4Name="ML-инженер" c4Type="Person" c4Description="" label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#cccccc&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="ml_engineer">
+          <mxCell style="html=1;fontSize=11;dashed=0;whiteSpace=wrap;fillColor=#083F75;strokeColor=#06315C;fontColor=#ffffff;shape=mxgraph.c4.person2;align=center;metaEdit=1;points=[[0.5,0,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0]];resizable=0;" parent="1" vertex="1">
+            <mxGeometry x="1810" y="800" width="200" height="180" as="geometry" />
+          </mxCell>
+        </object>
+
+        <object placeholders="1" c4Name="Оператор производства" c4Type="Person" c4Description="" label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#cccccc&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="operator">
+          <mxCell style="html=1;fontSize=11;dashed=0;whiteSpace=wrap;fillColor=#083F75;strokeColor=#06315C;fontColor=#ffffff;shape=mxgraph.c4.person2;align=center;metaEdit=1;points=[[0.5,0,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0]];resizable=0;" parent="1" vertex="1">
+            <mxGeometry x="1810" y="-80" width="200" height="180" as="geometry" />
+          </mxCell>
+        </object>
+
+        <!-- ===== СВЯЗИ ===== -->
+
+        <!-- Пилот протеза → Программа в чипе -->
+        <mxCell id="edge_pilot_fw" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="pilot" target="prosthesis_fw" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_pilot_fw_label" value="Предоставление миосигналов" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_pilot_fw" vertex="1" connectable="0">
+          <mxGeometry x="0.111" y="-2" relative="1" as="geometry">
+            <mxPoint x="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Пилот протеза → Приложение -->
+        <mxCell id="edge_pilot_app" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="pilot" target="mobile_app" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Программа в чипе → Приложение -->
+        <mxCell id="edge_fw_app" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="prosthesis_fw" target="mobile_app" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_fw_app_label" value="Управление протезом" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_fw_app" vertex="1" connectable="0">
+          <mxGeometry x="0.1336" relative="1" as="geometry">
+            <mxPoint y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Программа в чипе → Auth Gateway -->
+        <mxCell id="edge_fw_auth" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="prosthesis_fw" target="auth_gateway" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_fw_auth_label" value="Отправка телеметрии (4G)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_fw_auth" vertex="1" connectable="0">
+          <mxGeometry x="-0.1854" y="4" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Приложение → Auth Gateway -->
+        <mxCell id="edge_app_auth" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="mobile_app" target="auth_gateway" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_app_auth_label" value="Аутентификация (сессионный токен, PKCE)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_app_auth" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Auth Gateway → IdP -->
+        <mxCell id="edge_auth_keycloak" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" parent="1" source="auth_gateway" target="idp_keycloak" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_auth_keycloak_label" value="OAuth 2.0 + PKCE" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_auth_keycloak" vertex="1" connectable="0">
+          <mxGeometry x="-0.2" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="edge_auth_google" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" parent="1" source="auth_gateway" target="idp_google" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_auth_google_label" value="OAuth 2.0 + PKCE" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_auth_google" vertex="1" connectable="0">
+          <mxGeometry x="-0.2" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="edge_auth_eu" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" parent="1" source="auth_gateway" target="idp_eu" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_auth_eu_label" value="eIDAS / OAuth 2.0 + PKCE" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_auth_eu" vertex="1" connectable="0">
+          <mxGeometry x="-0.2" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Auth Gateway → User DB -->
+        <mxCell id="edge_auth_userdb" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="auth_gateway" target="user_db" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_auth_userdb_label" value="Создание/обновление учётной записи" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_auth_userdb" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Auth Gateway → API -->
+        <mxCell id="edge_auth_api" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="auth_gateway" target="api" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_auth_api_label" value="Прокси с access-токеном" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_auth_api" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- API → Medical DB -->
+        <mxCell id="edge_api_medicaldb" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="api" target="medical_db" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- API → User DB -->
+        <mxCell id="edge_api_userdb" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" parent="1" source="api" target="user_db" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_api_userdb_label" value="Проверка прав" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_api_userdb" vertex="1" connectable="0">
+          <mxGeometry x="-0.2" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Интернет-магазин → CRM -->
+        <mxCell id="edge_store_crm" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="web_store" target="crm" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_store_crm_label" value="Данные о заказах" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_store_crm" vertex="1" connectable="0">
+          <mxGeometry x="-0.3717" y="-3" relative="1" as="geometry">
+            <mxPoint x="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- CRM → CRM DB -->
+        <mxCell id="edge_crm_db" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="crm" target="crm_db" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Покупатель → Интернет-магазин -->
+        <mxCell id="edge_buyer_store" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="buyer" target="web_store" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_buyer_store_label" value="Выбор, заказ, оплата" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_buyer_store" vertex="1" connectable="0">
+          <mxGeometry x="-0.3717" y="-3" relative="1" as="geometry">
+            <mxPoint x="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ===== НОВЫЕ СВЯЗИ ДЛЯ СЕРВИСА ОТЧЁТОВ ===== -->
+
+        <!-- Airflow → CRM DB (Extract) -->
+        <mxCell id="edge_airflow_crm" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="airflow" target="crm_db" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_airflow_crm_label" value="Extract (CRM)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_airflow_crm" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Airflow → Medical DB (Extract) -->
+        <mxCell id="edge_airflow_medical" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="airflow" target="medical_db" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_airflow_medical_label" value="Extract (Medical)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_airflow_medical" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Airflow → ClickHouse (Load) -->
+        <mxCell id="edge_airflow_clickhouse" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="airflow" target="clickhouse" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_airflow_clickhouse_label" value="Load (Transform + Load)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_airflow_clickhouse" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Airflow → S3 (Generate files) -->
+        <mxCell id="edge_airflow_s3" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="airflow" target="s3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_airflow_s3_label" value="Generate files" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_airflow_s3" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- API → ClickHouse (Query) -->
+        <mxCell id="edge_api_clickhouse" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="api" target="clickhouse" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_api_clickhouse_label" value="Запрос данных отчёта" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_api_clickhouse" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- API → S3 (Get signed URL) -->
+        <mxCell id="edge_api_s3" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" parent="1" source="api" target="s3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_api_s3_label" value="Получение подписанной ссылки" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_api_s3" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ML-инженер → Airflow (мониторинг/запуск) -->
+        <mxCell id="edge_ml_airflow" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" parent="1" source="ml_engineer" target="airflow" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_ml_airflow_label" value="Мониторинг ETL" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge_ml_airflow" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Оператор → CRM -->
+        <mxCell id="edge_operator_crm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="operator" target="crm" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
