@@ -21,6 +21,11 @@ x-airflow-common: &airflow-common
     AIRFLOW_CONN_CRM_DB: postgresql://crm_user:crm_pass@crm-db:5432/crm_db
     AIRFLOW_CONN_MEDICAL_DB: postgresql://medical_user:medical_pass@medical-db:5432/medical_db
     AIRFLOW_CONN_OLAP_DB: postgresql://airflow:airflow@postgres:5432/airflow  # Используем ту же БД Airflow для OLAP (для теста)
+    CLICKHOUSE_HOST: clickhouse
+    CLICKHOUSE_PORT: 9000
+    CLICKHOUSE_DB: reports
+    CLICKHOUSE_USER: default
+    CLICKHOUSE_PASSWORD: clickhouse
   volumes:
     - ./dags:/opt/airflow/dags
     - ./dags/sql:/opt/airflow/dags/sql
@@ -91,6 +96,10 @@ services:
       - "8081:8000"
     environment:
       - DATABASE_URL=postgresql://airflow:airflow@postgres:5432/airflow
+      - CLICKHOUSE_URL=http://clickhouse:8123
+      - CLICKHOUSE_DB=reports
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_PASSWORD=clickhouse
       - KEYCLOAK_URL=http://keycloak:8080
       - KEYCLOAK_REALM=reports-realm
       - KEYCLOAK_CLIENT_ID=reports-api
@@ -102,8 +111,6 @@ services:
         condition: service_started
     networks:
       - dag_sample
-#     volumes:
-#       - ./backend:/app
 
   # Существующий сервис postgres (используется как OLAP для теста)
   postgres:
@@ -133,6 +140,28 @@ services:
       - dag_sample
     ports:
       - "5432:5432"  # Добавим проброс порта для удобства
+
+    # НОВЫЙ СЕРВИС: ClickHouse (OLAP)
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse
+    ports:
+      - "8123:8123"   # HTTP API
+      - "9000:9000"   # Native protocol
+    volumes:
+      - ./clickhouse/data:/var/lib/clickhouse
+      - ./clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      CLICKHOUSE_DB: reports
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: clickhouse
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    networks:
+      - dag_sample
 
   # НОВЫЙ СЕРВИС: CRM БД
   crm-db:
@@ -267,10 +296,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      crm-db:
-        condition: service_healthy
-      medical-db:
-        condition: service_healthy
     command: >
       bash -c "airflow db migrate && 
       airflow users create --username admin --firstname admin --lastname admin --role Admin --email admin@sample.ru --password admin"
@@ -294,6 +319,7 @@ services:
       airflow connections add 'crm_db' --conn-type 'postgres' --conn-host 'crm-db' --conn-schema 'crm_db' --conn-login 'crm_user' --conn-password 'crm_pass' --conn-port 5432 &&
       airflow connections add 'medical_db' --conn-type 'postgres' --conn-host 'medical-db' --conn-schema 'medical_db' --conn-login 'medical_user' --conn-password 'medical_pass' --conn-port 5432 &&
       airflow connections add 'olap_db' --conn-type 'postgres' --conn-host 'postgres' --conn-schema 'airflow' --conn-login 'airflow' --conn-password 'airflow' --conn-port 5432
+      airflow connections add 'clickhouse' --conn-type 'http' --conn-host 'clickhouse' --conn-port 8123 --conn-schema 'reports' --conn-login 'default' --conn-password 'clickhouse'
       "
 #    profiles:
 #      - init

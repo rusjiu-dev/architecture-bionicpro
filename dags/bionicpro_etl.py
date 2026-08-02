@@ -1,10 +1,14 @@
+# dags/bionicpro_etl.py
+
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow.hooks.postgres_hook import PostgresHook
+from clickhouse_driver import Client
 import pandas as pd
 import logging
+import os
 
 # Конфигурация
 default_args = {
@@ -22,8 +26,8 @@ dag = DAG(
     'bionicpro_etl',
     default_args=default_args,
     description='ETL для витрины отчётов BionicPRO',
-#    schedule_interval='0 2 * * *',  # Ежедневно в 02:00
-    schedule_interval=timedelta(seconds=30),  # Каждые 30 секунд
+    schedule_interval='0 2 * * *',  # Ежедневно в 02:00
+    # schedule_interval=timedelta(seconds=30),  # Для теста каждые 30 секунд
     catchup=False,
     max_active_runs=1,
     tags=['bionicpro', 'etl', 'reports']
@@ -65,8 +69,38 @@ WHERE t.timestamp >= CURRENT_DATE - INTERVAL '1 day'
 GROUP BY t.user_id, t.prosthesis_id, DATE(t.timestamp)
 """
 
-# Создание витрины (целевая таблица)
-CREATE_MART_SQL = """
+# ===== ClickHouse настройки =====
+CH_HOST = os.getenv("CLICKHOUSE_HOST", "clickhouse")
+CH_PORT = int(os.getenv("CLICKHOUSE_PORT", 9000))
+CH_DB = os.getenv("CLICKHOUSE_DB", "reports")
+CH_USER = os.getenv("CLICKHOUSE_USER", "default")
+CH_PASSWORD = os.getenv("CLICKHOUSE_PASSWORD", "clickhouse")
+
+# ===== Создание витрины в ClickHouse =====
+CREATE_CH_MART_SQL = """
+CREATE DATABASE IF NOT EXISTS reports;
+
+CREATE TABLE IF NOT EXISTS reports.mart_daily_user_report (
+    user_id String,
+    prosthesis_id String,
+    user_full_name String,
+    user_email String,
+    prosthesis_model String,
+    gesture_count UInt32,
+    avg_response_time_ms Float64,
+    p95_response_time_ms Float64,
+    error_count UInt32,
+    error_rate Float64,
+    battery_health_score Float64,
+    active_minutes UInt32,
+    report_generated_at DateTime DEFAULT now()
+) ENGINE = MergeTree()
+ORDER BY (user_id, report_generated_at)
+PARTITION BY toYYYYMM(report_generated_at);
+"""
+
+# ===== Создание витрины в PostgreSQL (оставляем для совместимости) =====
+CREATE_PG_MART_SQL = """
 CREATE TABLE IF NOT EXISTS reports.mart_daily_user_report (
     user_id UUID NOT NULL,
     prosthesis_id UUID NOT NULL,
@@ -88,7 +122,6 @@ CREATE INDEX IF NOT EXISTS idx_mart_user_date ON reports.mart_daily_user_report 
 CREATE INDEX IF NOT EXISTS idx_mart_date ON reports.mart_daily_user_report (report_generated_at DESC);
 """
 
-# Функции для задач DAG
 
 def extract_crm(**context):
     """Извлечение данных из CRM"""
@@ -97,10 +130,10 @@ def extract_crm(**context):
     
     df = pd.read_sql(CRM_EXTRACT_SQL, connection)
     
-    # Сохраняем в XCom для передачи в следующую задачу
     context['ti'].xcom_push(key='crm_data', value=df.to_json(orient='records'))
     logging.info(f"Извлечено {len(df)} записей из CRM")
     return len(df)
+
 
 def extract_telemetry(**context):
     """Извлечение данных телеметрии"""
@@ -113,6 +146,7 @@ def extract_telemetry(**context):
     logging.info(f"Извлечено {len(df)} записей телеметрии")
     return len(df)
 
+
 def transform_and_merge(**context):
     import json
     import logging
@@ -124,7 +158,6 @@ def transform_and_merge(**context):
     logging.info("=" * 50)
     
     try:
-        # Получаем данные из XCom
         crm_json = context['ti'].xcom_pull(key='crm_data', task_ids='extract_crm')
         telemetry_json = context['ti'].xcom_pull(key='telemetry_data', task_ids='extract_telemetry')
         
@@ -164,14 +197,12 @@ def transform_and_merge(**context):
             
             # Корректное формирование report_date
             if 'timestamp' in df_telemetry.columns:
-                # Если есть timestamp, используем его
                 df_telemetry['report_date'] = pd.to_datetime(df_telemetry['timestamp']).dt.strftime('%Y-%m-%d')
                 logging.info(f"Report_date из timestamp: {df_telemetry['report_date'].iloc[0] if not df_telemetry.empty else 'None'}")
             elif 'date' in df_telemetry.columns:
                 df_telemetry['report_date'] = pd.to_datetime(df_telemetry['date']).dt.strftime('%Y-%m-%d')
                 logging.info(f"Report_date из date: {df_telemetry['report_date'].iloc[0] if not df_telemetry.empty else 'None'}")
             else:
-                # Используем сегодняшнюю дату
                 today = datetime.now().strftime('%Y-%m-%d')
                 df_telemetry['report_date'] = today
                 logging.warning(f"Колонки 'timestamp' и 'date' отсутствуют, используется текущая дата: {today}")
@@ -183,7 +214,7 @@ def transform_and_merge(**context):
         if df_telemetry.empty or df_crm.empty:
             logging.warning("Нет данных для объединения")
             df_merged = pd.DataFrame(columns=[
-                'report_date', 'user_id', 'prosthesis_id',
+                'user_id', 'prosthesis_id',
                 'user_full_name', 'user_email', 'prosthesis_model',
                 'gesture_count', 'avg_response_time_ms', 
                 'p95_response_time_ms', 'error_count', 
@@ -196,7 +227,7 @@ def transform_and_merge(**context):
             if df_merged.empty:
                 logging.warning("Нет совпадающих записей для объединения")
                 df_merged = pd.DataFrame(columns=[
-                    'report_date', 'user_id', 'prosthesis_id',
+                    'user_id', 'prosthesis_id',
                     'user_full_name', 'user_email', 'prosthesis_model',
                     'gesture_count', 'avg_response_time_ms', 
                     'p95_response_time_ms', 'error_count', 
@@ -209,18 +240,6 @@ def transform_and_merge(**context):
                     'model': 'prosthesis_model'
                 }
                 df_merged = df_merged.rename(columns=rename_map)
-                
-                # Убеждаемся, что report_date в правильном формате
-                if 'report_date' in df_merged.columns:
-                    # Проверяем, что дата валидная
-                    try:
-                        df_merged['report_date'] = pd.to_datetime(df_merged['report_date']).dt.strftime('%Y-%m-%d')
-                    except Exception as e:
-                        logging.warning(f"Ошибка преобразования даты: {e}, используется текущая дата")
-                        df_merged['report_date'] = datetime.now().strftime('%Y-%m-%d')
-                else:
-                    df_merged['report_date'] = datetime.now().strftime('%Y-%m-%d')
-                    logging.warning("report_date отсутствует, установлена текущая дата")
                 
                 # Убеждаемся, что prosthesis_id не пустой
                 if 'prosthesis_id' in df_merged.columns:
@@ -268,12 +287,13 @@ def transform_and_merge(**context):
         logging.error(traceback.format_exc())
         raise
 
-def load_to_mart(**context):
-    """Загрузка данных в витрину с обработкой дубликатов"""
+
+def load_to_postgres_mart(**context):
+    """Загрузка данных в PostgreSQL витрину"""
     csv_path = context['ti'].xcom_pull(key='merged_data_path', task_ids='transform_and_merge')
     
     if not csv_path:
-        logging.warning("Нет данных для загрузки")
+        logging.warning("Нет данных для загрузки в PostgreSQL")
         return
     
     pg_hook = PostgresHook(postgres_conn_id='olap_db')
@@ -281,7 +301,7 @@ def load_to_mart(**context):
     cursor = connection.cursor()
     
     try:
-        # 1. Создаём временную таблицу
+        # Создаём временную таблицу
         cursor.execute("""
             CREATE TEMP TABLE temp_mart_load (
                 user_id VARCHAR(50),
@@ -298,7 +318,7 @@ def load_to_mart(**context):
             )
         """)
         
-        # 2. Загружаем данные во временную таблицу через COPY
+        # Загружаем данные во временную таблицу через COPY
         with open(csv_path, 'r') as f:
             cursor.copy_expert(
                 """
@@ -311,11 +331,7 @@ def load_to_mart(**context):
                 f
             )
         
-        # 3. Очищаем целевую таблицу (для тестов) или выполняем UPSERT
-        # Вариант A: Очистить таблицу перед загрузкой (для тестов)
-        # cursor.execute("TRUNCATE TABLE reports.mart_daily_user_report")
-        
-        # Вариант B: UPSERT с обработкой конфликтов
+        # UPSERT
         cursor.execute("""
             INSERT INTO reports.mart_daily_user_report 
             (user_id, prosthesis_id, user_full_name, user_email, 
@@ -328,7 +344,7 @@ def load_to_mart(**context):
                 p95_response_time_ms, error_count, active_minutes, battery_health_score,
                 CURRENT_TIMESTAMP
             FROM temp_mart_load
-            ON CONFLICT (report_generated_at, user_id, prosthesis_id) DO UPDATE SET
+            ON CONFLICT (user_id, prosthesis_id, report_generated_at) DO UPDATE SET
                 user_full_name = EXCLUDED.user_full_name,
                 user_email = EXCLUDED.user_email,
                 prosthesis_model = EXCLUDED.prosthesis_model,
@@ -342,25 +358,138 @@ def load_to_mart(**context):
         """)
         
         connection.commit()
-        logging.info("Данные успешно загружены в витрину")
+        logging.info("Данные успешно загружены в PostgreSQL витрину")
         
     except Exception as e:
         connection.rollback()
-        logging.error(f"Ошибка загрузки: {e}")
+        logging.error(f"Ошибка загрузки в PostgreSQL: {e}")
         raise
     finally:
         cursor.close()
         connection.close()
 
-# Определение задач DAG
 
-create_mart = PostgresOperator(
-    task_id='create_mart_table',
+def load_to_clickhouse_mart(**context):
+    """Загрузка данных в ClickHouse витрину"""
+    csv_path = context['ti'].xcom_pull(key='merged_data_path', task_ids='transform_and_merge')
+    
+    if not csv_path:
+        logging.warning("Нет данных для загрузки в ClickHouse")
+        return
+    
+    try:
+        # Чтение CSV
+        df = pd.read_csv(csv_path)
+        
+        if df.empty:
+            logging.warning("DataFrame пуст, загрузка в ClickHouse пропущена")
+            return
+        
+        # Подключение к ClickHouse
+        client = Client(
+            host=CH_HOST,
+            port=CH_PORT,
+            user=CH_USER,
+            password=CH_PASSWORD,
+            database=CH_DB
+        )
+        
+        # Преобразование данных для ClickHouse
+        records = df.to_dict('records')
+        
+        # Загрузка
+        client.execute(
+            """
+            INSERT INTO mart_daily_user_report (
+                user_id, prosthesis_id, user_full_name, user_email,
+                prosthesis_model, gesture_count, avg_response_time_ms,
+                p95_response_time_ms, error_count, battery_health_score,
+                active_minutes
+            ) VALUES
+            """,
+            records
+        )
+        
+        logging.info(f"Загружено {len(df)} записей в ClickHouse витрину")
+        
+        # Проверка загрузки
+        count = client.execute("SELECT COUNT(*) FROM mart_daily_user_report")[0][0]
+        logging.info(f"Всего записей в ClickHouse: {count}")
+        
+    except Exception as e:
+        logging.error(f"Ошибка загрузки в ClickHouse: {e}")
+        raise
+
+
+def create_clickhouse_mart(**context):
+    """Создание витрины в ClickHouse"""
+    try:
+        client = Client(
+            host=CH_HOST,
+            port=CH_PORT,
+            user=CH_USER,
+            password=CH_PASSWORD
+        )
+        
+        # Выполняем SQL скрипт
+        for query in CREATE_CH_MART_SQL.split(';'):
+            if query.strip():
+                client.execute(query)
+                logging.info(f"Выполнен запрос: {query[:50]}...")
+        
+        logging.info("ClickHouse витрина создана успешно")
+        
+    except Exception as e:
+        logging.error(f"Ошибка создания витрины в ClickHouse: {e}")
+        raise
+
+
+def check_clickhouse_connection(**context):
+    """Проверка подключения к ClickHouse"""
+    try:
+        client = Client(
+            host=CH_HOST,
+            port=CH_PORT,
+            user=CH_USER,
+            password=CH_PASSWORD
+        )
+        result = client.execute("SELECT 1")
+        if result and result[0][0] == 1:
+            logging.info("Подключение к ClickHouse успешно")
+            return True
+        else:
+            raise Exception("ClickHouse не отвечает")
+    except Exception as e:
+        logging.error(f"Ошибка подключения к ClickHouse: {e}")
+        raise
+
+
+# ===== Определение задач DAG =====
+
+# Создание витрин
+create_pg_mart = PostgresOperator(
+    task_id='create_pg_mart_table',
     postgres_conn_id='olap_db',
-    sql=CREATE_MART_SQL,
+    sql=CREATE_PG_MART_SQL,
     dag=dag
 )
 
+create_ch_mart = PythonOperator(
+    task_id='create_ch_mart_table',
+    python_callable=create_clickhouse_mart,
+    provide_context=True,
+    dag=dag
+)
+
+# Проверка ClickHouse
+check_ch = PythonOperator(
+    task_id='check_clickhouse',
+    python_callable=check_clickhouse_connection,
+    provide_context=True,
+    dag=dag
+)
+
+# Извлечение данных
 extract_crm_task = PythonOperator(
     task_id='extract_crm',
     python_callable=extract_crm,
@@ -375,6 +504,7 @@ extract_telemetry_task = PythonOperator(
     dag=dag
 )
 
+# Трансформация
 transform_merge_task = PythonOperator(
     task_id='transform_and_merge',
     python_callable=transform_and_merge,
@@ -382,12 +512,29 @@ transform_merge_task = PythonOperator(
     dag=dag
 )
 
-load_mart_task = PythonOperator(
-    task_id='load_to_mart',
-    python_callable=load_to_mart,
+# Загрузка в PostgreSQL
+load_pg_mart_task = PythonOperator(
+    task_id='load_to_pg_mart',
+    python_callable=load_to_postgres_mart,
     provide_context=True,
     dag=dag
 )
 
-# Зависимости
-create_mart >> [extract_crm_task, extract_telemetry_task] >> transform_merge_task >> load_mart_task
+# Загрузка в ClickHouse
+load_ch_mart_task = PythonOperator(
+    task_id='load_to_ch_mart',
+    python_callable=load_to_clickhouse_mart,
+    provide_context=True,
+    dag=dag
+)
+
+# ===== Зависимости =====
+
+# Сначала создаём витрины
+[create_pg_mart, check_ch] >> create_ch_mart
+
+# Затем ETL
+[extract_crm_task, extract_telemetry_task] >> transform_merge_task
+
+# После трансформации загружаем в обе БД
+transform_merge_task >> [load_pg_mart_task, load_ch_mart_task]
