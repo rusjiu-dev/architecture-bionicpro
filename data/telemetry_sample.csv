@@ -1,0 +1,8 @@
+user_id,prosthesis_id,timestamp,response_time_ms,is_error,battery_level,active_seconds
+prothetic1,1,2026-08-01 10:00:00,85,false,95,120
+prothetic1,1,2026-08-01 10:05:00,92,false,94,60
+prothetic1,1,2026-08-01 10:10:00,150,true,93,30
+prothetic2,2,2026-08-01 11:00:00,75,false,88,200
+prothetic2,2,2026-08-01 11:15:00,80,false,87,150
+prothetic3,3,2026-08-01 12:00:00,110,false,78,100
+prothetic3,3,2026-08-01 12:30:00,120,true,77,45
