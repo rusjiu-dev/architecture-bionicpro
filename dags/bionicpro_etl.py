@@ -65,7 +65,6 @@ SELECT
     MIN(t.battery_level) AS min_battery_level,
     SUM(t.active_seconds) / 60 AS active_minutes
 FROM telemetry.raw_events t
-WHERE t.timestamp >= CURRENT_DATE - INTERVAL '1 day'
 GROUP BY t.user_id, t.prosthesis_id, DATE(t.timestamp)
 """
 
