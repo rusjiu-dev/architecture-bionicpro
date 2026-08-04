@@ -17,10 +17,11 @@ x-airflow-common: &airflow-common
     AIRFLOW_CONN_WRITE_TO_POSTGRES: postgresql://airflow:airflow@postgres:5432/airflow
     _PIP_ADDITIONAL_REQUIREMENTS: ''
     AIRFLOW_INPUT_DIR: '/opt/airflow/dag-inputs'
-    # Добавляем переменные для подключений к БД
+    # Добавляем переменные для подключений к БД (test)
     AIRFLOW_CONN_CRM_DB: postgresql://crm_user:crm_pass@crm-db:5432/crm_db
     AIRFLOW_CONN_MEDICAL_DB: postgresql://medical_user:medical_pass@medical-db:5432/medical_db
     AIRFLOW_CONN_OLAP_DB: postgresql://airflow:airflow@postgres:5432/airflow  
+    # Добавляем переменные для подключений к БД (tt)
     CLICKHOUSE_HOST: clickhouse
     CLICKHOUSE_PORT: 9000
     CLICKHOUSE_DB: reports
